@@ -216,12 +216,14 @@ def main():
     ap.add_argument("--count", type=int, default=PERIODS)
     ap.add_argument("--scenarios", type=int, default=1)
     ap.add_argument("--realized-day", type=int, default=0, dest="realized_day")
+    ap.add_argument("--max-rounds", type=int, default=300, dest="max_rounds",
+                    help="teto de rodadas da fase de programacao")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
     print("fase de programacao (dia seguinte)...")
     schedule = run(args.config, alpha=ALPHA, eps=EPS, n_scenarios=args.scenarios,
-                   verbose=False)
+                   max_rounds=args.max_rounds, verbose=False)
     print(f"  convergiu em {len(schedule['history'])} rodadas")
 
     log = run_operation(args.config, schedule, first=args.first, count=args.count,

@@ -323,7 +323,9 @@ def main():
                     help="config.json do caso (alocacao do armazenamento)")
     ap.add_argument("--alpha", type=float, default=ALPHA)
     ap.add_argument("--eps", type=float, default=EPS)
-    ap.add_argument("--max-rounds", type=int, default=MAX_ROUNDS)
+    # Teto da linha de comando: o MAX_ROUNDS do modulo (30) para antes da
+    # convergencia, que na IEEE 13 por fase leva 42 rodadas.
+    ap.add_argument("--max-rounds", type=int, default=300)
     ap.add_argument("--scenarios", type=int, default=1)
     ap.add_argument("--step-rule", default="constant",
                     choices=["constant", "diminishing"], dest="step_rule")

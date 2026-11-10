@@ -1,8 +1,17 @@
 # O modelo de mercado
 
+!!! note "A formulação e a plataforma"
+
+    Esta página descreve o mecanismo como ele roda na plataforma completa, o
+    [co-simulation-opentes](https://grei-ufc.github.io/co-simulation-opentes/):
+    com agentes, rede de comunicação e o ponto de operação resolvido no OpenDSS.
+    Neste repositório os mesmos modelos rodam num laço único. A negociação é
+    idêntica, mas não há troca de mensagens, e a fase de operação usa o modelo
+    linearizado da matriz de sensibilidade no lugar do fluxo de potência.
+
 Esta página responde três perguntas sem que seja preciso ler o código: **qual é
 o modelo matemático, onde ele está implementado e em que ele difere da
-formulação de origem.** Os resultados ficam em [Resultados](https://github.com/grei-ufc/co-simulation-opentes/blob/main/docs/paginas/resultados.md).
+formulação de origem.** Os resultados ficam em [Resultados](https://grei-ufc.github.io/co-simulation-opentes/results/).
 
 ## De onde vem a formulação
 
@@ -32,9 +41,9 @@ a tensão de cada fase, e o preço sombra é calculado por fase.
 
 A tese põe um concentrador por transformador de distribuição. A IEEE 13 tem um
 transformador só, então há um concentrador, que representa a cabeceira do
-alimentador. Os modelos de otimização ficam em
-`simulators/market-opentes/market_opentes/optimization.py`; os agentes, em
-`simulators/pade-opentes/agents/market_agents.py`.
+alimentador. Os modelos de otimização ficam em `market_opentes/optimization.py`,
+neste repositório; os agentes, em `agentes/market_agents.py`, no
+[tteso-agents-opentes](https://grei-ufc.github.io/tteso-agents-opentes/).
 
 ## Os modelos de otimização
 
@@ -106,8 +115,9 @@ de tensão no fluxo não linear.
 A tensão é linearizada em torno do ponto de operação da previsão:
 `ΔU = −S · (p + q)`, com `S = ∂V/∂P`. A tese obtinha `S` do Jacobiano do
 pandapower; aqui ela é medida por perturbação no próprio OpenDSS
-(`grid-opentes/src/simulators/sensitivity.py`), o que dispensa um segundo
-simulador e vale para rede desequilibrada.
+(`sensitivity.py`, no co-simulation-opentes), o que dispensa um segundo
+simulador e vale para rede desequilibrada. Neste repositório as matrizes vêm
+prontas, em `market_opentes/dados/ieee13/`.
 
 ## A análise por fase
 
@@ -116,7 +126,7 @@ simulador e vale para rede desequilibrada.
 Na IEEE 13 o modelo por barra precisa resumir as fases numa só tensão, e a
 escolha natural é a média. A média esconde violação: a negociação feita sobre ela
 deixa a média dentro da faixa e a fase B acima de 1,03 pu (ver
-[Resultados](https://github.com/grei-ufc/co-simulation-opentes/blob/main/docs/paginas/resultados.md)).
+[Resultados](https://grei-ufc.github.io/co-simulation-opentes/results/)).
 
 A causa é física. Injetar 1 kW só na fase A da barra 671 sobe a fase A em 51 µpu,
 **baixa a fase B em 71 µpu** e sobe a C em 39 (média do dia). O efeito sobre a
@@ -202,7 +212,7 @@ CFP ao DSO passa de 10,9 para 24,2 kB por rodada, e a resposta do concentrador d
 
 Na rede 6TiSCH isso pesa: as mensagens dos ciclos 2 e 3 têm de 20 a 34 kB, e o
 ciclo 3 gasta de 474 a 541 s de rede por rodada, acima do orçamento de 300 s em
-todas elas (ver [Resultados](https://github.com/grei-ufc/co-simulation-opentes/blob/main/docs/paginas/resultados.md#sobre-a-rede-6tisch)). Para caber, a
+todas elas (ver [Resultados](https://grei-ufc.github.io/co-simulation-opentes/results/#sobre-a-rede-6tisch)). Para caber, a
 mensagem precisa ser comprimida, ou só a parte que mudou ser enviada.
 
 ## O regulador de tensão
@@ -291,7 +301,7 @@ EUR/(kW²·h)). Sem calibração, as colunas de preço do `dlmp.csv` saem com o 
   uma carga por barra, equilibrada entre as fases dela, e liga o PV1 em triângulo
   B-C (fisicamente ele é estrela B e C). Com as cargas e os PV nas fases físicas o
   desequilíbrio é bem maior, e o armazenamento atual não basta: ver
-  [O caso IEEE 13](https://github.com/grei-ufc/co-simulation-opentes/blob/main/docs/paginas/caso.md).
+  [O caso IEEE 13](https://grei-ufc.github.io/co-simulation-opentes/explanation/ieee13-case/).
 - **O reativo é consequência, não decisão.** Com `MARKET_STORAGE_PF` o reativo
   acompanha o ativo pelo fator de potência; despachar reativo como serviço seria
   controle Volt/Var, fora do escopo desta camada.

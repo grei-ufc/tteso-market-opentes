@@ -5,6 +5,8 @@
 [![image](https://img.shields.io/badge/-Python%20Version%20|%203.12.11-42b85a?logo=Python&logoColor=fbec41&color=42b85a&labelColor=grey&style=flat)](https://www.python.org/downloads/release/python-31112/)
 [![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?logo=discord&logoColor=white)](https://discord.com/channels/1415180099644297368/1415431164717564065)
 
+**[Documentação do projeto](https://grei-ufc.github.io/tteso-market-opentes/)**: instalação, tutoriais, guias práticos, referência dos comandos, das variáveis e da API, e a formulação do mercado.
+
 Repositório do time **TTESO** (Sistemas Transativos e Otimização) do projeto
 [OpenTES](https://github.com/grei-ufc/general-opentes), do Grupo de Redes
 Elétricas Inteligentes (GREI) da UFC. Aqui fica o **modelo do mercado
@@ -44,7 +46,7 @@ market_opentes/
   figuras.py             as figuras de uma execução
   figuras_mensagens.py   as figuras do traço de mensagens (só com resultados da co-simulação)
   dados/ieee13/          o caso IEEE 13 barras (ver "Dados do caso")
-docs/mercado.md          a formulação completa, a análise por fase e o que difere da tese
+docs/                    a documentação (MkDocs), publicada no GitHub Pages
 FUNDAMENTACAO_TEORICA/   exercícios de meta-heurísticas, programação linear (Pyomo, CPLEX) e Mosaik
 ```
 
@@ -129,12 +131,13 @@ idênticos aos do `./run.sh centralizado` do co-simulation-opentes (conferido em
 | `MARKET_CRITERIO` | `relativo` | parada pelo desacordo relativo à potência de cada dispositivo; `absoluto`: o critério da tese |
 | `MARKET_EPS_REL` | `1e-3` | tolerância do critério relativo |
 | `MARKET_ALPHA` | `0.6` | passo do subgradiente |
-| `MARKET_SCENARIOS` | `1` | cenários do prosumidor (`9` é o modelo estocástico completo) |
 | `MARKET_V_BACKOFF` | `1e-3` | margem nos limites de tensão do operador, contra o erro da linearização |
 | `MARKET_SOLVER`, `MARKET_SOLVER_PATH` | `cplex`, vazio | solver e executável |
 | `MARKET_DATA_DIR`, `MARKET_GRID_DIR` | `market_opentes/dados/ieee13` | outro caso de estudo |
 
-A faixa de tensão do mercado é de 0,97 a 1,03 pu (`config.py`).
+Os cenários do prosumidor são escolhidos pela opção `--scenarios` dos comandos
+(`1`, o padrão, é determinístico). A faixa de tensão do mercado é de 0,97 a
+1,03 pu (`config.py`).
 
 ## Dados do caso
 
