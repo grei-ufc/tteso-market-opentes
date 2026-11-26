@@ -92,14 +92,32 @@ def _solver():
     return solver
 
 
+def _otimo(res):
+    return (res.solver.status == SolverStatus.ok
+            and res.solver.termination_condition == TerminationCondition.optimal)
+
+
 def _solve(model, label):
-    res = _solver().solve(model)
-    ok = (res.solver.status == SolverStatus.ok
-          and res.solver.termination_condition == TerminationCondition.optimal)
-    if not ok:
-        raise RuntimeError(
-            f"{label}: solver terminou em {res.solver.termination_condition}")
-    return model
+    # O crossover pode falhar por instabilidade numerica mesmo com o barrier no
+    # otimo: com 3 cenarios por prosumidor, o DSO da IEEE 13 para com "base
+    # singular" (CPLEX Error 1256) e o Pyomo nem carrega a solucao. Refazer com
+    # enfase numerica resolve o mesmo modelo ate o otimo; e so a segunda tentativa,
+    # entao nada muda quando a primeira da certo.
+    try:
+        res = _solver().solve(model)
+        if _otimo(res):
+            return model
+    except ValueError:
+        res = None
+    if SOLVER_NAME == "cplex":
+        solver = _solver()
+        solver.options["emphasis numerical"] = "y"
+        res = solver.solve(model, load_solutions=False)
+        if _otimo(res):
+            model.solutions.load_from(res)
+            return model
+    termino = res.solver.termination_condition if res is not None else "erro"
+    raise RuntimeError(f"{label}: solver terminou em {termino}")
 
 
 # ---------------------------------------------------------------------------
